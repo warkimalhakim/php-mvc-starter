@@ -1,0 +1,22 @@
+{
+  "name": "warkim/mvc",
+  "description": "MVC starter siap pakai",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "Warkim\\": "app/"
+    },
+    "files": [
+      "app/helpers/view.php",
+      "app/helpers/config.php"
+    ]
+  },
+  "authors": [
+    {
+      "name": "warkimalhakim",
+      "email": "warkimalhakim@gmail.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {}
+}

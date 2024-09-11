@@ -1,0 +1,34 @@
+# Blokir akses ke folder tanpa file index
+Options -Indexes
+
+# Mencegah akses ke file .env
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Mencegah akses ke file sensitif lainnya
+<FilesMatch "\.(env|git|gitignore|htaccess|ini|log|conf|cfg|php|sh|pl|py)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Aturan Rewrite untuk menangani file tanpa ekstensi
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Izinkan akses ke file dengan ekstensi .php atau .html
+    RewriteCond %{REQUEST_URI} \.(php|html)$ [NC]
+    RewriteRule ^ - [L]
+
+    # Jika file atau direktori tidak ada
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ - [F,L]
+
+    # Aturan untuk menangani permintaan tanpa ekstensi
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !\.(php|html)$ [NC]
+    RewriteRule ^ - [F,L]
+</IfModule>
