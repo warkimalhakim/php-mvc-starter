@@ -40,7 +40,7 @@ Route berada pada folder routes atau "routes/web.php", contoh penggunaannya sepe
        Route::get('/contact', [Contact::class, 'index']);
 
 ## MENGAKSES .ENV DARI (METHOD) CONFIG
-Untuk dapat menggunakan atau mengambil informasi dari file **.env** kamu dapat menggunakan method **`config()`**. Contoh penggunaan di Controller:
+Untuk dapat menggunakan atau mengambil informasi dari file **.env** kamu dapat menggunakan method **`config()`**. Contoh penggunaan di **Controller**:
 
     <?php
     namespace Warkim\controllers;
@@ -61,3 +61,17 @@ Untuk dapat menggunakan atau mengambil informasi dari file **.env** kamu dapat m
 	    }
     
     }
+
+Contoh penggunaan di **View** file dan juga pada **Route**:
+
+    <?php
+    echo  'Nama Aplikasi: '  .  config('APP_NAME');
+    ?>
+    <h2>Halaman Kontak</h2>
+    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Delectus, sed. A laborum quidem porro consectetur vel veritatis mollitia deleniti ipsam unde sunt praesentium, nisi qui quasi dolore laboriosam exercitationem iusto quod.</p>
+
+
+## CEK URL DAN URL QUERY PARAMETER (ACTIVE ROUTE)
+* Jika dibutuhkan untuk mengecek route yang saat ini bisa menggunakan **`Route::is()`**, mengembalikan tipe data ***Array***
+* Jika ingin mengecek/membandingkan route saat ini dengan yang dikehendaki, maka bisa menggunakan **`Route::is('/nama-route-yang-dikehendaki')`**, mengambalikan tipe data ***Boolean***
+* Jika ingin mengecek query parameter apa saja yang sedang dibuka atau mengambil nilai query tersebut bisa menggunakan **`Route::query()`** mengembalikan ***Array***, **`Route::query('nama-key')`** mengembalikan ***String*** atau ***NULL***
