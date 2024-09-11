@@ -1,6 +1,6 @@
 <?php
 
-use Warkim\helpers\Request;
+use Warkim\helpers\Route;
 
 function config(string $env_key)
 {
@@ -36,9 +36,42 @@ function loadEnv($file)
         list($key, $value) = explode('=', $line, 2) + [NULL, NULL];
 
         if (!is_null($key) && !is_null($value)) {
-            $env[trim($key)] = trim($value);
+            $env[trim($key)] = trim(str_replace(' ', '', $value));
         }
     }
 
     return $env;
 }
+
+
+
+function route(string $path, $data = null)
+{
+    $pattern = '/[^a-zA-Z0-9\/\-\_\.\:]/';
+    $base_url = config('BASE_URL');
+    $base_url = preg_replace($pattern, '', $base_url);
+    // Hapus trailing slash
+    $base_url = rtrim($base_url, '/');
+
+    // Hapus spasi dari $path jika diperlukan
+    $path = preg_replace('/[\.]/', '/', $path);
+    $path = str_replace(' ', '', $path);
+    $path = rtrim(ltrim($path, '/'), '/');
+
+    $route = new Route();
+
+    // Kembalikan base_url + path
+    if (!empty($data)):
+
+        $full_url = $base_url . '/' . $path . '/' . $data;
+        return $full_url;
+
+    else:
+        return $base_url . '/' . $path;
+    endif;
+}
+
+// function is(string $route = null)
+// {
+//     return route()->is($route);
+// }
