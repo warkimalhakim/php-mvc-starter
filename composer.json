@@ -21,5 +21,7 @@
     }
   ],
   "minimum-stability": "stable",
-  "require": {}
+  "require": {
+    "eftec/bladeone": "^4.16"
+  }
 }

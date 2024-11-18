@@ -1,4 +1,6 @@
 *.git
 /composer.lock
+*.env
 /verdor
 /vendor/*
+node_modules/

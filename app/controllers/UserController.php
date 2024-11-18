@@ -12,15 +12,17 @@ class UserController
     public function index()
     {
         $users = User::all();
+
         return view('users.index', [
-            'users' => $users
+            'title' => 'Daftar Users',
+            'users' => $users,
         ]);
     }
 
     public function create()
     {
         return view('users.create', [
-            'user' => User::where('id', '!=', 1)->get(),
+            'user' => User::where('id', 1)->get(),
         ]);
     }
 

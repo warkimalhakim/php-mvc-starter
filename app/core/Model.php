@@ -80,8 +80,8 @@ class Model
 
     public static function all($order_by = 'ASC')
     {
-        $instance = new self();
-        return static::query("SELECT * FROM " . $instance->table . " ORDER BY {$instance->primaryKey} {$order_by}");
+        $instance = new static();
+        return static::query("SELECT * FROM  {$instance->table} ORDER BY {$instance->primaryKey} {$order_by}");
     }
 
     protected static function query($query)
