@@ -1,11 +1,5 @@
 <h2>Tambahkan User</h2>
 
-<?php
-echo '<pre>';
-var_dump($user);
-echo '</pre>';
-?>
-
 <form action="<?= route('users.store'); ?>" method="post">
     <div>
         <label for="nama">Name</label>
