@@ -11,6 +11,9 @@
       "app/core/config.php"
     ]
   },
+  "scripts": {
+    "server": "php -S localhost:8000"
+  },
   "authors": [
     {
       "name": "warkimalhakim",
