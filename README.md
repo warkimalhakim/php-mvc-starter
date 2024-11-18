@@ -70,7 +70,7 @@ Untuk dapat menggunakan atau mengambil informasi dari file **.env** kamu dapat m
 Contoh penggunaan di **View** (Warkim\views) file dan juga pada **Route** (routes\web.php):
 
     <?php
-    echo  'Nama Aplikasi: '  .  **config('APP_NAME')**;
+    echo  'Nama Aplikasi: '  .  config('APP_NAME');
     ?>
     <h2>Halaman Kontak</h2>
     <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Delectus, sed. A laborum quidem porro consectetur vel veritatis mollitia deleniti ipsam unde sunt praesentium, nisi qui quasi dolore laboriosam exercitationem iusto quod.</p>
@@ -106,3 +106,32 @@ Digunkan di Views **`Warkim\views\users\create.php`** , masukkan action formulir
         </div>
         <button type="submit">Submit</button>
     </form>
+
+## MODELS
+
+Model merupakan **bagian yang bertugas untuk mengatur, menyiapkan, memanipulasi, dan mengorganisir data (biasanya dari basis data)**. Direktori Model berada pada app\models, kamu bisa menyimpannya disana. Setiap model yang kamu buat harus extends ke **`Warkim\core\Model`**. Berikut contoh penggunaan model user.
+
+    <?php
+    namespace Warkim\models;
+    use Warkim\core\Model;
+
+    class  User  extends  Model
+    {
+
+    protected  $table  =  "users";
+    protected  $primaryKey  =  "id";
+    protected  $columns  = ["nama", "umur"];
+
+    }
+
+## INHERITANCE DARI MODELS
+
+Jika model yang kamu definisikan sudah extends ke core Model maka akan mewarisi methods antara lain:
+| Methods | Tipe | Penjelasan |
+|--|--|--|
+| YourModel::all() | object | mengambil/menampilkan semua data records |
+| YourModel::where('column_name', 'operand', 'value')->get() | object | mencari record berdasarkan nama kolom (column_name), operand (null/empty, =, !=, LIKE) dan nilai (value : string, integer, boolean) |
+| YourModel::where('column_name', 'value')->orderBy('column_name', 'order')->get() | object | mencari record berdasarkan nama kolom (column_name), operand (null/empty, =, !=, LIKE) dan nilai (value : string, integer, boolean) dan melakukan order (ASCENDING atau DESCENDING) |
+| YourModel::where('column_name', 'value')->orderBy('column_name', 'order')->first() | object | mencari record berdasarkan nama kolom (column_name), operand (null/empty, =, !=, LIKE) dan nilai (value : string, integer, boolean) dan **dapat disertakan/tidak dengan order** (ASCENDING atau DESCENDING) dan mengambil hanya 1 record sesuai order |
+| YourModel::where('column_name', 'value')->latest() | object | mencari record berdasarkan nama kolom (column_name), operand (null/empty, =, !=, LIKE) dan nilai (value : string, integer, boolean) dan mengambil semua record mulai dari Z-A/Descending |
+| YourModel::create() | boolean | menyimpan data. isi create() dengan Array seperti berikut: `User::create(['nama' => 'Warkim', 'umur' => 30]);` |
