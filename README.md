@@ -5,6 +5,13 @@ Konsep MVC ini diinisialisasi sesuai dengan versi Warkim, digunakan pribadi untu
 Jika kamu menemukan repositori ini dan ingin menggunakannya, dipersilahkan untuk digunakan secara public namun tidak boleh merusak atribut.
 Jika kamu berminat mengembangkan source ini juga dengan senang hati dipersilahkan.
 
+## FITUR
+
+- [ ] **RINGAN**
+- [ ] **MUDAH DIGUNAKAN**
+- [ ] **ROUTER YANG FLEKSIBEL**
+- [ ] **BLADE TEMPLATE ENGINE**
+
 ## CARA PENGGUNAAN
 
 - Download repo ini dan unzip/extract
@@ -123,6 +130,14 @@ Model merupakan **bagian yang bertugas untuk mengatur, menyiapkan, memanipulasi,
     protected  $columns  = ["nama", "umur"];
 
     }
+
+### REKOMENDASI ATRIBUT DI MODEL
+
+Agar koneksi ke tabel di database berjalan dengan baik, kami merekomendasikan untuk membuat beberapa definisi dengan atribut (attributes) di dalam model kelas yang dibuat. Tambahkan definisi atribut ini:
+
+- **protected $table**, isi dengan string nama tabel (table name)
+- **protected $primaryKey**, isi dengan string nama kolom PRIMARY KEY
+- **protected $columns**, diisi dengan nama kolom-kolom yang ada pada tabel (_terdefinisi diatas_) dan dimasukkan kedalam Array
 
 ## INHERITANCE DARI MODELS
 
