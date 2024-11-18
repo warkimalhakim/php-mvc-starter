@@ -7,8 +7,8 @@
       "Warkim\\": "app/"
     },
     "files": [
-      "app/helpers/view.php",
-      "app/helpers/config.php"
+      "app/core/view.php",
+      "app/core/config.php"
     ]
   },
   "authors": [

@@ -1,6 +1,7 @@
 <?php
 
-use Warkim\helpers\Route;
+use Warkim\core\Redirect;
+use Warkim\core\Route;
 
 function config(string $env_key)
 {
@@ -11,7 +12,7 @@ function config(string $env_key)
         $app = app();
         $getEnv = $app['env'] ??  $_SERVER['DOCUMENT_ROOT'] . '/_env/.env';
         $env = loadEnv($getEnv);
-        return !empty($env[$env_key]) ? $env[$env_key] . "\n" : null;
+        return !empty($env[$env_key]) ? $env[$env_key] : null;
     } else {
         return null;
     }
@@ -36,19 +37,19 @@ function loadEnv($file)
         list($key, $value) = explode('=', $line, 2) + [NULL, NULL];
 
         if (!is_null($key) && !is_null($value)) {
-            $env[trim($key)] = trim(str_replace(' ', '', $value));
+            $env[trim($key)] = str_replace(' ', '', trim($value, ' '));
         }
     }
 
     return $env;
 }
 
-
+// FUNCTION CONTROL
 
 function route(string $path, $data = null)
 {
     $pattern = '/[^a-zA-Z0-9\/\-\_\.\:]/';
-    $base_url = config('BASE_URL');
+    $base_url = !empty(config('BASE_URL')) ? config('BASE_URL') : 'http://' . $_SERVER['HTTP_HOST'];
     $base_url = preg_replace($pattern, '', $base_url);
     // Hapus trailing slash
     $base_url = rtrim($base_url, '/');
@@ -75,3 +76,23 @@ function route(string $path, $data = null)
 // {
 //     return route()->is($route);
 // }
+
+function redirect(string $url = null)
+{
+    $request = new Redirect($url);
+    return $request;
+}
+function to($url)
+{
+    return redirect()::to($url);
+}
+
+function with($type, $message)
+{
+    return redirect()->with($type, $message);
+}
+
+function back()
+{
+    return redirect()->back();
+}

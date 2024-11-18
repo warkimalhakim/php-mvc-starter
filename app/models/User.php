@@ -2,26 +2,18 @@
 
 namespace Warkim\models;
 
-use Warkim\helpers\Model;
+use Warkim\core\Model;
+use InvalidArgumentException;
 
 
 class User extends Model
 {
-    protected $table = "users";
+    protected $table        = "users";
+    protected $primaryKey   = "id";
+    protected $columns      = ["nama", "umur"];
 
-    public static function all()
-    {
-        return self::get_all((new self)->table);
-    }
 
-    public static function get($id)
-    {
-        $table = (new self)->table;
-
-        return self::query("SELECT * FROM $table WHERE id = $id");
-    }
-
-    public static function getData()
+    public static function getPrepare()
     {
         return self::prepare("SELECT * FROM users WHERE id = ?", [1]);
     }
