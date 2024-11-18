@@ -20,9 +20,9 @@ Jika kamu berminat mengembangkan source ini juga dengan senang hati dipersilahka
 - Buka terminal dan pastikan sudah mengarah ke direktori projectnya
 - Install dependensi melalui composer `composer update`
 - Jalankan local development server (bebas, xampp, laragon, ..etc)
-- Jalankan service Apache/Nginx atau dengan command `php -S localhost:3000` (port bebas)
+- Jalankan service dengan command `composer run server` atau `php -S localhost:8000`
 
-## ENVIRONMENT
+## FILE ENVIRONMENT (.env)
 
 - File .env atau environment adalah file yang memuat informasi yang bisa ditambahkan sesuai dengan kebutuhan pengembangan website
 - Default: berada di dalam folder `_env`
@@ -50,9 +50,9 @@ Route berada pada folder routes atau "routes/web.php", contoh penggunaannya sepe
 
        Route::get('/contact', [Contact::class, 'index']);
 
-## MENGAKSES .ENV DARI (METHOD) CONFIG
+## MENGAKSES .ENV DARI (HELPER) CONFIG
 
-Untuk dapat menggunakan atau mengambil informasi dari file **.env** kamu dapat menggunakan method **`config()`**. Contoh penggunaan di **Controller**:
+Untuk dapat menggunakan atau mengambil informasi dari file **.env** kamu dapat menggunakan helper **`config()`**. Contoh penggunaan di **Controller**:
 
     <?php
     namespace Warkim\controllers;
