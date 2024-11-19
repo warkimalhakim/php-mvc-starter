@@ -22,7 +22,7 @@ class UserController
     public function create()
     {
         return view('users.create', [
-            'user' => User::where('id', 1)->get(),
+            'user' => User::all(),
         ]);
     }
 

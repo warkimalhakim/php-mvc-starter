@@ -20,9 +20,9 @@ Jika kamu berminat mengembangkan source ini juga dengan senang hati dipersilahka
 - Buka terminal dan pastikan sudah mengarah ke direktori projectnya
 - Install dependensi melalui composer `composer update`
 - Jalankan local development server (bebas, xampp, laragon, ..etc)
-- Jalankan service dengan command `composer run server` atau `php -S localhost:8000`
+- Jalankan service Apache/Nginx atau dengan command `php -S localhost:3000` (port bebas)
 
-## FILE ENVIRONMENT (.env)
+## ENVIRONMENT
 
 - File .env atau environment adalah file yang memuat informasi yang bisa ditambahkan sesuai dengan kebutuhan pengembangan website
 - Default: berada di dalam folder `_env`
@@ -50,9 +50,9 @@ Route berada pada folder routes atau "routes/web.php", contoh penggunaannya sepe
 
        Route::get('/contact', [Contact::class, 'index']);
 
-## MENGAKSES .ENV DARI (HELPER) CONFIG
+## MENGAKSES .ENV DARI (METHOD) CONFIG
 
-Untuk dapat menggunakan atau mengambil informasi dari file **.env** kamu dapat menggunakan helper **`config()`**. Contoh penggunaan di **Controller**:
+Untuk dapat menggunakan atau mengambil informasi dari file **.env** kamu dapat menggunakan method **`config()`**. Contoh penggunaan di **Controller**:
 
     <?php
     namespace Warkim\controllers;
@@ -150,3 +150,17 @@ Jika model yang kamu definisikan sudah extends ke core Model maka akan mewarisi 
 | YourModel::where('column_name', 'value')->orderBy('column_name', 'order')->first() | object | mencari record berdasarkan nama kolom (column_name), operand (null/empty, =, !=, LIKE) dan nilai (value : string, integer, boolean) dan **dapat disertakan/tidak dengan order** (ASCENDING atau DESCENDING) dan mengambil hanya 1 record sesuai order |
 | YourModel::where('column_name', 'value')->latest() | object | mencari record berdasarkan nama kolom (column_name), operand (null/empty, =, !=, LIKE) dan nilai (value : string, integer, boolean) dan mengambil semua record mulai dari Z-A/Descending |
 | YourModel::create() | boolean | menyimpan data. isi create() dengan Array seperti berikut: `User::create(['nama' => 'Warkim', 'umur' => 30]);` |
+
+## BLADE TEMPLATE
+
+Blade template sepenuhnya siap digunakan, aktifkan melalui file **`.env`** dengan merubah nilai `BLADE_TEMPLATE=`**`true`** setelah itu kamu bisa menambahkan file view dengan ekstensi .blade.php contoh home.blade.php
+Contoh method create yang akan menggunakan view (path: `app/views/users/create.blade.php`):
+
+    public  function  create()
+    {
+        return  view('users.create', [
+    	    'user' => User::all(),
+        ]);
+    }
+
+Namun jika kamu **tidak ingin menggunakan Blade**, kamu tidak perlu merubah **BLADE_TEMPLATE** dan biarkan isinya **false**.
