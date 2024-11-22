@@ -1,7 +1,21 @@
-*.git
-/composer.lock
+# Environment files
 *.env
-/_env/.env
-/verdor
-/vendor/*
+
+*.gitignore
+
+# Dependency directories
+/vendor/
 node_modules/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# IDE files
+*.swp
+*.swo
+.idea/
+.vscode/
