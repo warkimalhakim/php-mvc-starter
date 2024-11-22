@@ -4,26 +4,79 @@ namespace Warkim\core;
 
 class Route
 {
+    protected static $method;
+
+    // public static function handle(string $request_type = 'GET', string $path = '/', $callable = [])
+    // {
+    //     $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+    //     // Redirect jika URI berisi '/index'
+    //     if (preg_match('/\/index$/', $uri)) {
+    //         header("Location: " . rtrim(str_replace('/index', '', $uri), '/'));
+    //         exit;
+    //     }
+
+    //     // Inisialisasi request
+    //     $request = new Request();
+
+
+    //     // Jika request method tidak sesuai, return false
+    //     if ($request_type != $_SERVER['REQUEST_METHOD']) {
+
+    //         // NAMUN CEK JIKA ADA METHOD YANG DIKIRIM OLEH BLADE @method MAKA CEK
+    //         if (!empty($request->input('_method'))) {
+    //             $_SERVER['REQUEST_METHOD'] = $request->input('_method');
+    //             $request_type = $request->input('_method');
+    //             return true;
+    //         }
+
+    //         return false;
+    //     }
+
+    //     // Deteksi apakah URL yang diminta cocok dengan route
+    //     // $parameters = [];
+    //     if (self::matchUriWithPath($uri, $path, $parameters)) {
+    //         return self::handleCallable($callable, $request, $parameters);
+    //     }
+
+    //     unset($callable);
+    //     return false;
+    // }
+
     public static function handle(string $request_type = 'GET', string $path = '/', $callable = [])
     {
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-        // Jika request method tidak sesuai, return false
-        if ($request_type != $_SERVER['REQUEST_METHOD']) {
-            return false;
+        // Redirect jika URI berisi '/index'
+        if (preg_match('/\/index$/', $uri)) {
+            header("Location: " . rtrim(str_replace('/index', '', $uri), '/'));
+            exit;
         }
 
         // Inisialisasi request
         $request = new Request();
 
+        // Jika request method tidak sesuai, return false
+        if ($request_type != $_SERVER['REQUEST_METHOD']) {
+
+            // CEK METHOD YANG DIKIRIM BLADE @method
+            if (!empty($request->input('_method'))) {
+                $_SERVER['REQUEST_METHOD'] = $request->input('_method');
+                $request_type = $request->input('_method');
+                return true;
+            }
+
+            return false;
+        }
+
         // Deteksi apakah URL yang diminta cocok dengan route
-        $parameters = [];
         if (self::matchUriWithPath($uri, $path, $parameters)) {
             return self::handleCallable($callable, $request, $parameters);
         }
 
         return false;
     }
+
 
     private static function matchUriWithPath($uri, $path, &$parameters)
     {
@@ -43,8 +96,19 @@ class Route
         foreach ($pathSegments as $index => $segment) {
             // Jika segmen adalah parameter dinamis (misalnya {id} atau {slug})
             if (preg_match('/\{([^\}]*)\}/', $segment, $matches)) {
+
+                if ($uriSegments[$index] == "index") {
+                    static::$method = "index";
+                }
+
+                if (in_array($uriSegments[$index], ["create", "edit", "store", "update", "delete", "destroy"])) {
+                    return false;
+                }
+
                 // Simpan parameter dengan nama yang sesuai
                 $parameters[$matches[1]] = $uriSegments[$index];
+
+                // 
             } else if ($segment !== $uriSegments[$index]) {
                 // Jika segmen tidak cocok dan bukan parameter dinamis, return false
                 return false;
@@ -56,14 +120,21 @@ class Route
 
     private static function handleCallable($callable, $request, $parameters = [])
     {
+
         // Jika callable adalah function
         if (is_callable($callable)) {
             return call_user_func($callable, $request, ...array_values($parameters));
         }
 
         // Jika callable adalah array [ClassName, methodName]
-
         if (is_array($callable)) {
+
+            if (!empty(static::$method) && static::$method === "index") {
+                unset($callable[1]);
+                array_push($callable, static::$method);
+                $callable = array_values($callable);
+            }
+
             list($class, $method) = $callable;
 
             // Cek apakah class dan method valid
@@ -72,6 +143,8 @@ class Route
                 return call_user_func([$controller, $method], $request, ...array_values($parameters));
             }
         }
+
+        unset($callable);
 
         // Jika callable tidak valid, return null
         return null;
@@ -110,13 +183,6 @@ class Route
 
         parse_str($query_str, $query);
         return !empty($key) ? ($query[$key] ?? null) : $query;
-    }
-
-    public function name($router_name = null)
-    {
-        if ($router_name === null) {
-            return false;
-        }
     }
 }
 

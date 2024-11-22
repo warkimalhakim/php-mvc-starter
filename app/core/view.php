@@ -6,6 +6,7 @@ use eftec\bladeone\BladeOne;
 function view(string $view_path, $data = null)
 {
     $path = preg_replace("/\./", "/", $view_path);
+    $path = '/' . $path;
 
     // Ekstrak data jika diberikan
     if (!empty($data) && is_array($data)) {
@@ -13,8 +14,8 @@ function view(string $view_path, $data = null)
     }
 
     // Tentukan path untuk kedua ekstensi
-    $view_path          = __DIR__ . '/../views';
-    $file_path_php      = __DIR__ . '/../views/' . $path . '.php';
+    $view_path          = __DIR__ . '/../views/';
+    $file_path_php      = __DIR__ . '/../views/' .   $path . '.php';
     $file_path_blade    = __DIR__ . '/../views/' . $path . '.blade.php';
 
     $application_mode = config('APP_MODE') ? config('APP_MODE') : 'development';
@@ -61,11 +62,17 @@ function view(string $view_path, $data = null)
 
             // BLADE TEMPLATE ENGINE
             $blade = new Blade($view_path, $mode);
-            echo $blade->render($path . '.blade.php', $data);
+
+            try {
+                echo $blade->render($path . '.blade.php', $data);
+            } catch (Exception $e) {
+                echo "Error found " . $e->getMessage() . "<br>" . $e->getTraceAsString();
+            }
 
             // 
         } else {
             // Jika tidak ada file ditemukan
+            echo "TIDAK DITEMUKAN";
             return false;
         }
     }

@@ -113,15 +113,24 @@ class Model
 
     protected static function prepare($query, $execute = [])
     {
-        try {
+        $db = new self();
 
-            $db = new self();
+        try {
             $sql = $db->conn->prepare($query);
             $sql->execute($execute);
 
             // Jika query adalah INSERT, kembalikan ID terakhir
             if (preg_match('/^INSERT/i', $query)) {
-                return true;
+                // return true;
+                if ($sql->rowCount() > 0) {;
+
+                    // KEMBALIKAN DATA YANG DITAMBAHKAN MELALUI ID
+                    $get = new static();
+                    return $get->find($db->conn->lastInsertId());
+                    // 
+                } else {
+                    return false;
+                }
             }
 
             // Jika query adalah SELECT, kembalikan hasilnya
@@ -137,13 +146,17 @@ class Model
             return true;
             // 
         } catch (PDOException $th) {
-            return [
-                'success' => false,
-                'error' => $th->getMessage()
-            ];
+            return printf("Error: " . $th->getMessage());
         }
     }
 
+
+    /**
+     * Find a record by ID
+     *
+     * @param int $id ID of the record to find
+     * @return object|false The found record or boolean false if not found
+     */
     public static function find($id)
     {
         $instance = new static();
@@ -170,109 +183,179 @@ class Model
 
     public function get()
     {
-        $queryWhere = '';
+        try {
+            $queryWhere = '';
 
-        // Susun klausa WHERE
-        if (!empty($this->query['where'])) {
-            $wheres = array_map(function ($ar) {
-                return "{$ar[0]} {$ar[1]} ?";
-            }, $this->query['where']);
+            // Susun klausa WHERE
+            if (!empty($this->query['where'])) {
+                $wheres = array_map(function ($ar) {
+                    return "{$ar[0]} {$ar[1]} ?";
+                }, $this->query['where']);
 
-            $queryWhere = "WHERE " . implode(' AND ', $wheres);
+                $queryWhere = "WHERE " . implode(' AND ', $wheres);
+            }
+
+            // Ambil nilai parameter dari klausa WHERE
+            $bindings = array_map(fn($where) => $where[2], $this->query['where']);
+
+            // Tambahkan klausa ORDER BY jika ada
+            $order_by = $this->order ? "ORDER BY {$this->order}" : '';
+
+            // Susun query SQL lengkap
+            $query = "SELECT * FROM {$this->table} $queryWhere $order_by";
+
+            // Jalankan query
+            return static::prepare($query, $bindings);
+        } catch (PDOException $th) {
+            return false;
         }
-
-        // Ambil nilai parameter dari klausa WHERE
-        $bindings = array_map(fn($where) => $where[2], $this->query['where']);
-
-        // Tambahkan klausa ORDER BY jika ada
-        $order_by = $this->order ? "ORDER BY {$this->order}" : '';
-
-        // Susun query SQL lengkap
-        $query = "SELECT * FROM {$this->table} $queryWhere $order_by";
-
-        // Jalankan query
-        return static::prepare($query, $bindings);
     }
 
     public function first()
     {
         $queryWhere = '';
 
-        // Susun klausa WHERE
-        if (!empty($this->query['where'])) {
-            $wheres = array_map(function ($ar) {
-                return "{$ar[0]} {$ar[1]} ?";
-            }, $this->query['where']);
+        try {
+            // Susun klausa WHERE
+            if (!empty($this->query['where'])) {
+                $wheres = array_map(function ($ar) {
+                    return "{$ar[0]} {$ar[1]} ?";
+                }, $this->query['where']);
 
-            $queryWhere = "WHERE " . implode(' AND ', $wheres);
+                $queryWhere = "WHERE " . implode(' AND ', $wheres);
+            }
+
+            // Ambil nilai parameter dari klausa WHERE
+            $bindings = array_map(fn($where) => $where[2], $this->query['where']);
+
+            // Tambahkan klausa ORDER BY jika ada
+            $order_by = $this->order ? "ORDER BY {$this->order}" : '';
+
+            // Susun query SQL lengkap
+            $query = "SELECT * FROM {$this->table} $queryWhere $order_by";
+
+            // Jalankan query
+            return static::single($query, $bindings);
+        } catch (PDOException $th) {
+            return false;
         }
-
-        // Ambil nilai parameter dari klausa WHERE
-        $bindings = array_map(fn($where) => $where[2], $this->query['where']);
-
-        // Tambahkan klausa ORDER BY jika ada
-        $order_by = $this->order ? "ORDER BY {$this->order}" : '';
-
-        // Susun query SQL lengkap
-        $query = "SELECT * FROM {$this->table} $queryWhere $order_by";
-
-        // Jalankan query
-        return static::single($query, $bindings);
     }
     public function latest()
     {
         $queryWhere = '';
 
-        // Susun klausa WHERE
-        if (!empty($this->query['where'])) {
-            $wheres = array_map(function ($ar) {
-                return "{$ar[0]} {$ar[1]} ?";
-            }, $this->query['where']);
+        try {
+            // Susun klausa WHERE
+            if (!empty($this->query['where'])) {
+                $wheres = array_map(function ($ar) {
+                    return "{$ar[0]} {$ar[1]} ?";
+                }, $this->query['where']);
 
-            $queryWhere = "WHERE " . implode(' AND ', $wheres);
+                $queryWhere = "WHERE " . implode(' AND ', $wheres);
+            }
+
+            // Ambil nilai parameter dari klausa WHERE
+            $bindings = array_map(fn($where) => $where[2], $this->query['where']);
+
+            // Tambahkan klausa ORDER BY jika ada
+            $order_by = (!empty($this->primaryKey) ? $this->primaryKey : 'id') . ' DESC';
+
+            // Susun query SQL lengkap
+            $query = "SELECT * FROM {$this->table} $queryWhere ORDER BY {$order_by}";
+
+            // Jalankan query
+            return static::prepare($query, $bindings);
+        } catch (PDOException $th) {
+            return false;
         }
-
-        // Ambil nilai parameter dari klausa WHERE
-        $bindings = array_map(fn($where) => $where[2], $this->query['where']);
-
-        // Tambahkan klausa ORDER BY jika ada
-        $order_by = (!empty($this->primaryKey) ? $this->primaryKey : 'id') . ' DESC';
-
-        // Susun query SQL lengkap
-        $query = "SELECT * FROM {$this->table} $queryWhere ORDER BY {$order_by}";
-
-        // Jalankan query
-        return static::prepare($query, $bindings);
     }
 
 
     public static function create(array $data)
     {
-        $instance = new static(); // Gunakan model anak saat ini
+        try {
+            $instance = new static(); // Gunakan model anak saat ini
 
-        // Validasi: pastikan data memiliki key yang sesuai dengan kolom
-        $missingColumns = array_diff($instance->columns, array_keys($data));
-        if (!empty($missingColumns)) {
-            throw new InvalidArgumentException(
-                "Missing required data for columns: " . implode(', ', $missingColumns)
+            // Validasi: pastikan data memiliki key yang sesuai dengan kolom
+            $missingColumns = array_diff($instance->columns, array_keys($data));
+            if (!empty($missingColumns)) {
+                throw new InvalidArgumentException(
+                    "Missing required data for columns: " . implode(', ', $missingColumns)
+                );
+            }
+
+            // Buat string kolom dan placeholder
+            $columns = implode(', ', $instance->columns);
+            $placeholders = implode(', ', array_map(fn($col) => ":$col", $instance->columns));
+
+            // Siapkan data untuk SQL binding
+            $preparedData = [];
+            foreach ($instance->columns as $column) {
+                $preparedData[":$column"] = $data[$column] ?? null; // Default null jika tidak ada
+            }
+
+            // Jalankan query INSERT
+            return static::prepare(
+                "INSERT INTO {$instance->table} ($columns) VALUES ($placeholders)",
+                $preparedData
             );
+        } catch (PDOException $th) {
+            return false;
         }
+    }
 
-        // Buat string kolom dan placeholder
-        $columns = implode(', ', $instance->columns);
-        $placeholders = implode(', ', array_map(fn($col) => ":$col", $instance->columns));
+    public static function update(array $array_data, $id)
+    {
+        $db = new static();
 
-        // Siapkan data untuk SQL binding
-        $preparedData = [];
-        foreach ($instance->columns as $column) {
-            $preparedData[":$column"] = $data[$column] ?? null; // Default null jika tidak ada
+        try {
+
+            // Validasi: pastikan data memiliki key yang sesuai dengan kolom
+            $missingColumns = array_diff($db->columns, array_keys($array_data));
+            if (!empty($missingColumns)) {
+                throw new InvalidArgumentException(
+                    "Missing required data for columns: " . implode(', ', $missingColumns)
+                );
+            }
+
+            // Buat string kolom dan placeholder
+            // UPDATE BERDASARKAN ARRAY YANG DIKIRIM SAJA
+            // $update_column  = array_keys($array_data); // ['nama', 'umur']
+            // $columns        = implode(', ', $update_column); // "nama", "umur"
+            // $placeholders   = implode(', ', array_map(fn($col) => ":$col", $update_column)); // ":nama", ":umur"
+
+            // Siapkan data untuk SQL binding
+            // $preparedData = [];
+            $set_data = [];
+            $set_bindings = [];
+            foreach ($array_data as $key_name => $value_name) {
+                $set_data[] = $key_name . '= :' . $key_name;
+                $set_bindings[":$key_name"] = $value_name;
+                // $preparedData[":$column"] = $data[$column] ?? null; // Default null jika tidak ada
+            }
+
+            // Hasil yang diinginkan
+            // nama = :nama, umur = :umur
+            $set_column = implode(', ', $set_data);
+
+            // Jalankan query update
+            return static::prepare(
+                "UPDATE {$db->table} SET $set_column WHERE {$db->primaryKey} = $id",
+                $set_bindings
+            );
+        } catch (PDOException $th) {
+            throw new Exception("Error Processing Request", 1);
         }
+    }
 
-        // Jalankan query INSERT
-        return static::prepare(
-            "INSERT INTO {$instance->table} ($columns) VALUES ($placeholders)",
-            $preparedData
-        );
+    public static function delete($id)
+    {
+        try {
+            $db = new static();
+            return static::prepare("DELETE FROM {$db->table} WHERE {$db->primaryKey} = ?", [$id]);
+        } catch (PDOException $error) {
+            return throw new Exception("Error Processing Request", 1) . $error->getMessage();
+        }
     }
 
     protected function connect()
@@ -309,7 +392,8 @@ class Model
 
             // 
         } catch (PDOException $error) {
-            echo "DATABASE TIDAK TERHUBUNG " . $error->getMessage();
+            echo "<h1>DATABASE TIDAK TERHUBUNG</h1>" . PHP_EOL;
+            echo $error->getMessage();
             exit;
         }
     }

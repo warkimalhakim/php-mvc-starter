@@ -1,7 +1,8 @@
 <?php
 
-use Warkim\core\Redirect;
 use Warkim\core\Route;
+use Warkim\core\Session;
+use Warkim\core\Redirect;
 
 function config(string $env_key)
 {
@@ -72,27 +73,63 @@ function route(string $path, $data = null)
     endif;
 }
 
-// function is(string $route = null)
-// {
-//     return route()->is($route);
-// }
-
 function redirect(string $url = null)
 {
     $request = new Redirect($url);
     return $request;
 }
+
 function to($url)
 {
     return redirect()::to($url);
 }
 
-function with($type, $message)
-{
-    return redirect()->with($type, $message);
-}
+// function with(string $type, $message)
+// {
+//     // SET SESSION
+//     Session::put($type, $message);
+//     return back();
+// }
 
 function back()
 {
     return redirect()->back();
+}
+
+function session(string $key = null)
+{
+    $session = new Session();
+    return !empty($key) ? (!empty($session->get($key)) ? true : false) : $session;
+}
+function all()
+{
+    $session = new Session();
+    return $session->all();
+}
+
+function get(string $session_name = null)
+{
+    $session = session();
+    return $session->get($session_name);
+}
+
+function put(string $key, $value)
+{
+    return session()->put($key, $value);
+}
+
+function forget(string $key)
+{
+    session()->forget($key);
+}
+function clear()
+{
+    session()->flush();
+}
+
+function flash(string $key)
+{
+    $message = session()->get($key);
+    if (session($key)) session()->forget($key);
+    return $message;
 }
