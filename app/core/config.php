@@ -47,10 +47,10 @@ function loadEnv($file)
 
 // FUNCTION CONTROL
 
-function route(string $path, $data = null)
+function route(string $path, $data = null, $http_host = false)
 {
     $pattern = '/[^a-zA-Z0-9\/\-\_\.\:]/';
-    $base_url = !empty(config('BASE_URL')) ? config('BASE_URL') : 'http://' . $_SERVER['HTTP_HOST'];
+    $base_url = !empty(config('BASE_URL')) && !$http_host ? config('BASE_URL') : 'http://' . $_SERVER['HTTP_HOST'];
     $base_url = preg_replace($pattern, '', $base_url);
     // Hapus trailing slash
     $base_url = rtrim($base_url, '/');
