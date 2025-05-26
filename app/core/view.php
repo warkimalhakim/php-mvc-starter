@@ -3,7 +3,7 @@
 use Warkim\core\Blade;
 use eftec\bladeone\BladeOne;
 
-function view(string $view_path, $data = null)
+function view(?string $view_path, $data = null)
 {
     $path = preg_replace("/\./", "/", $view_path);
     $path = '/' . $path;

@@ -6,46 +6,10 @@ class Route
 {
     protected static $method;
 
-    // public static function handle(string $request_type = 'GET', string $path = '/', $callable = [])
-    // {
-    //     $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
-    //     // Redirect jika URI berisi '/index'
-    //     if (preg_match('/\/index$/', $uri)) {
-    //         header("Location: " . rtrim(str_replace('/index', '', $uri), '/'));
-    //         exit;
-    //     }
-
-    //     // Inisialisasi request
-    //     $request = new Request();
-
-
-    //     // Jika request method tidak sesuai, return false
-    //     if ($request_type != $_SERVER['REQUEST_METHOD']) {
-
-    //         // NAMUN CEK JIKA ADA METHOD YANG DIKIRIM OLEH BLADE @method MAKA CEK
-    //         if (!empty($request->input('_method'))) {
-    //             $_SERVER['REQUEST_METHOD'] = $request->input('_method');
-    //             $request_type = $request->input('_method');
-    //             return true;
-    //         }
-
-    //         return false;
-    //     }
-
-    //     // Deteksi apakah URL yang diminta cocok dengan route
-    //     // $parameters = [];
-    //     if (self::matchUriWithPath($uri, $path, $parameters)) {
-    //         return self::handleCallable($callable, $request, $parameters);
-    //     }
-
-    //     unset($callable);
-    //     return false;
-    // }
-
     public static function handle(string $request_type = 'GET', string $path = '/', $callable = [])
     {
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
 
         // Redirect jika URI berisi '/index'
         if (preg_match('/\/index$/', $uri)) {
@@ -187,7 +151,7 @@ class Route
 }
 
 // Route Get URL
-function route($route = null)
+function route(?string $route = null)
 {
     return new Route($route);
 }

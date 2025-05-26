@@ -4,6 +4,6 @@
 
 @section('content')
 
-SELAMAT DATANG {{ $nama ?? 'GUEST' }}
+SELAMAT DATANG {{ $nama ?? ($title ?? 'GUEST') }}
 
 @endsection
