@@ -73,7 +73,7 @@ function route(string $path, $data = null)
     endif;
 }
 
-function redirect(string $url = null)
+function redirect(?string $url = null)
 {
     $request = new Redirect($url);
     return $request;
@@ -96,7 +96,7 @@ function back()
     return redirect()->back();
 }
 
-function session(string $key = null)
+function session(?string $key = null)
 {
     $session = new Session();
     return !empty($key) ? (!empty($session->get($key)) ? true : false) : $session;
@@ -107,7 +107,7 @@ function all()
     return $session->all();
 }
 
-function get(string $session_name = null)
+function get(?string $session_name = null)
 {
     $session = session();
     return $session->get($session_name);
